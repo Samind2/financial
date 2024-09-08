@@ -1,20 +1,38 @@
-import React from "react";
+// import React from "react";
 import { useUser } from "@clerk/clerk-react";
-import { useFinancialRecord } from "../../contexts/financial.context";
+import { useFinancialRecords } from "../../contexts/financial.context";
 import AddRecordForm from "./AddRecordForm";
-import FinancialReccordTable from "./FinancialRecordTable";
+import FinancialRecordTable from "./FinancialRecordTable";
 
-function index() {
+const Dashboard = () => {
   const { user } = useUser();
-  const { records } = useFinancialRecord();
+  const { records } = useFinancialRecords() || { records: [] }; // ให้ค่าเริ่มต้นเป็น array ว่างๆ
+
+  // คำนวณยอดรวมรายเดือน
+  const totalMonthly = records.reduce((total, record) => {
+    const recordDate = new Date(record.date);
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    if (recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear) {
+      return total + parseFloat(record.amount);
+    }
+
+    return total;
+  }, 0).toFixed(2);
+
   return (
     <div className="max-w-screen-2xl container mx-auto xl:px-24 px-4">
-      <div>Welcome {user?.firstName}! Here are your finance</div>
+      <div className="text-center text-3xl md:text-4xl md:leading-snug font-bold my-2">
+        Welcome {user?.firstName}! Here are your finances:
+      </div>
       <AddRecordForm />
-      <div>Total Monthly: 0000฿</div>
-      <FinancialReccordTable />
+      <div className="text-center text-xl my-4">
+        Total Monthly: {totalMonthly}฿
+      </div>
+      <FinancialRecordTable records={records} />
     </div>
   );
-}
+};
 
-export default index;
+export default Dashboard;

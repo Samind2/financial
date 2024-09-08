@@ -29,7 +29,7 @@ const financialservice = {
   getAllFinancialRecords,
   getAllFinancialRecordsByUserId,
   getFinancialRecordById,
-  createFinancialRecord,
+  createFinancialRecord, // ฟังก์ชันนี้ถูกนำไปใช้
   updateFinancialRecord,
   deleteFinancialRecord,
 };
