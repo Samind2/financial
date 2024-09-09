@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useFinancialRecords } from '../../contexts/financial.context';
+import  { useState } from 'react';
+import { useFinancialRecord } from '../../contexts/financial.context';
 
 const FinancialRecordTable = () => {
-  const { records = [], updateRecord = () => {}, deleteRecord = () => {} } = useFinancialRecords() || {};
+  const { records = [], updateRecord = () => {}, deleteRecord = () => {} } = useFinancialRecord() || {};
   const [editRecord, setEditRecord] = useState(null);
 
   const handleEdit = (record) => {

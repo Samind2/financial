@@ -1,12 +1,12 @@
 // import React from "react";
 import { useUser } from "@clerk/clerk-react";
-import { useFinancialRecords } from "../../contexts/financial.context";
+import { useFinancialRecord } from "../../contexts/financial.context";
 import AddRecordForm from "./AddRecordForm";
 import FinancialRecordTable from "./FinancialRecordTable";
 
 const Dashboard = () => {
   const { user } = useUser();
-  const { records } = useFinancialRecords() || { records: [] }; // ให้ค่าเริ่มต้นเป็น array ว่างๆ
+  const { records } = useFinancialRecord() || { records: [] }; // ให้ค่าเริ่มต้นเป็น array ว่างๆ
 
   // คำนวณยอดรวมรายเดือน
   const totalMonthly = records.reduce((total, record) => {
