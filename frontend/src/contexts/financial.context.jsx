@@ -2,39 +2,40 @@ import { createContext, useContext, useEffect, useState } from "react";
 import financialservice from "../service/financial.service";
 import { useUser } from "@clerk/clerk-react";
 
-export const FinancialReccordContext = createContext();
+// เปลี่ยนชื่อ Context ให้ถูกต้อง
+export const FinancialRecordContext = createContext();
 
-export const FinancialReccordsProvider = ({ children }) => {
-    const [records, setRecords] = useState([])
+export const FinancialRecordsProvider = ({ children }) => {
+    const [records, setRecords] = useState([]);
     const { user } = useUser();
-    const fetchRecord = async () => {
+    
+    const fetchRecords = async () => {
         if (!user) return;
         try {
-            const response = await financialservice.getAllFinancialRecordsByUserId(user.id)
+            const response = await financialservice.getAllFinancialRecordsByUserId(user.id);
             if (response.status === 200) {
                 setRecords(response.data);
             }
-
         } catch (error) {
             console.log(error);
         }
     };
+    
     useEffect(() => {
-        fetchRecord();
+        fetchRecords();
     }, [user]);
 
     const addRecord = async (record) => {
-        try {
-            const response = await financialservice.addRecord(record);
-            if (response.status === 200) {
-                setRecords((prev) => [...prev, response.data]);
-            }
-
-        } catch (error) {
-            console.log(error);
-
-        }
-    }
+      try {
+          const response = await financialservice.createFinancialRecord(record);
+          if (response.status === 200) {
+              setRecords((prev) => [...prev, response.data]);
+          }
+      } catch (error) {
+          console.log(error);
+      }
+  };
+  
 
     const updateRecord = async (id, newRecord) => {
         try {
@@ -55,11 +56,7 @@ export const FinancialReccordsProvider = ({ children }) => {
         try {
             const response = await financialservice.deleteFinancialRecord(id);
             if (response.status === 200) {
-                setRecords((prev) =>
-                    prev.filter((record) =>
-                        record.id !== id
-                    )
-                );
+                setRecords((prev) => prev.filter((record) => record.id !== id));
             }
         } catch (error) {
             console.log(error);
@@ -67,13 +64,13 @@ export const FinancialReccordsProvider = ({ children }) => {
     };
 
     return (
-    <FinancialReccordContext.Provider
-        value={{ records, addRecord, updateRecord, deleteRecord}}
-    >
-
-        {children}
-    </FinancialReccordContext.Provider> );
-
+        <FinancialRecordContext.Provider
+            value={{ records, addRecord, updateRecord, deleteRecord }}
+        >
+            {children}
+        </FinancialRecordContext.Provider>
+    );
 };
 
-export const useFinancialRecord = () => useContext(FinancialReccordContext);
+// ส่งออก hook สำหรับการใช้ context
+export const useFinancialRecord = () => useContext(FinancialRecordContext);

@@ -1,10 +1,11 @@
-import  { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
-import { useUser } from '@clerk/clerk-react';
-import financialservice from '../../service/financial.service';
 
-const AddRecord = () => {
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
+import { useFinancialRecord } from "../../contexts/financial.context";
+import { useState } from "react";
+
+const AddRecordForm = () => {
   const [financial, setFinancial] = useState({
     category: '',
     date: '',
@@ -12,12 +13,9 @@ const AddRecord = () => {
     amount: '',
     paymentMethod: ''
   });
+  const { addRecord } = useFinancialRecord();
   const { user } = useUser();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // ไม่มีการใช้งานเพิ่มเติมใน useEffect
-  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,32 +24,31 @@ const AddRecord = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // ตรวจสอบว่าข้อมูลทั้งหมดได้ถูกกรอกหรือไม่
+    
+    // Check if all fields are filled
     if (!financial.category || !financial.date || !financial.description || !financial.amount || !financial.paymentMethod) {
       Swal.fire({
         title: 'Error',
         text: 'Please fill out all fields',
         icon: 'error'
       });
-    
+      return; // Return early if validation fails
     }
 
-    // เพิ่ม userID เข้าไปในข้อมูลที่ส่ง
     const record = { ...financial, userId: user.id };
 
     try {
-      const response = await financialservice.createFinancialRecord(record);
-      if (response.status === 200) {
-        Swal.fire({
-          title: 'Success',
-          text: 'Record added successfully',
-          icon: 'success'
-        }).then(() => {
-          navigate('/'); // เปลี่ยนหน้าไปที่โฮม
-        });
-      } else {
-        throw new Error('Failed to add record');
-      }
+      // Call addRecord from context to update state
+      await addRecord(record);
+      
+      Swal.fire({
+        title: 'Success',
+        text: 'Record added successfully',
+        icon: 'success'
+      }).then(() => {
+        navigate('/'); // Navigate after successful addition
+      });
+      
     } catch (error) {
       console.error('Error:', error);
       Swal.fire({
@@ -159,4 +156,4 @@ const AddRecord = () => {
   );
 };
 
-export default AddRecord;
+export default AddRecordForm;
