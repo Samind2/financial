@@ -6,7 +6,7 @@ const Home = () => {
     <div>
       <SignedOut>
         <h1 className="text-4xl md:text-5xl md:leading-snug font-bold my-2">
-          Welcome to your own Personal Finance Tracker
+          Welcome to your own Personal Finance Tracker :
         </h1>
       </SignedOut>
       <SignedIn>
