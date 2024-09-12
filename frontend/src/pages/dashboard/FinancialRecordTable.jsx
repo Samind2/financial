@@ -16,7 +16,7 @@ const FinancialRecordTable = () => {
   };
 
   const handleSaveEdit = () => {
-    if (editRecord) {
+    if (editRecord) { 
       updateRecord(editRecord.id, editRecord);
       setEditRecord(null);
     }
